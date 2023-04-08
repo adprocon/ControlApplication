@@ -1,0 +1,34 @@
+
+spring:
+  profiles:
+    active: dev
+  data:
+    jpa:
+      repositories:
+        bootstrap-mode: default
+    rest:
+      base-path: ""
+      detection-strategy: annotated
+#  datasource:
+#    url: jdbc:sqlite:database.db
+#    driver-class-name: org.sqlite.JDBC
+  jpa:
+    hibernate:
+      ddl-auto: update
+
+    properties:
+      hibernate:
+        dialect: net.apcsimple.controlapplication.dialect.SQLiteDialect
+    show-sql: false
+    open-in-view: false
+  devtools:
+    add-properties: false
+#  web:
+#    resources:
+#      static-locations: classpath:/static/
+logging:
+  level:
+    web: off
+
+#server:
+#  port: ${controlapp.port:8080}

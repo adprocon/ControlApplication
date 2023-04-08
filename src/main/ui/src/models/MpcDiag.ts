@@ -1,0 +1,22 @@
+export class MpcDiag {
+    inputs: number[][][] = [[[]]];
+    states: number[][][] = [[[]]];
+    restoredStates: number[][][] = [[[]]];
+    outputs: number[][][] = [[[]]];
+    computedOutputs: number[][][] = [[[]]];
+    freeResponseStates: number[][] = [[0]];
+    freeResponseOut: number[][][] = [[[]]];
+    freeResponseError: number[][][] = [[[]]];
+    prediction: number[][][] = [[[]]];
+    trajectory: number[][][] = [[[]]];
+    dUMin: number[][][] = [[[]]];
+    dUMax: number[][][] = [[[]]];
+    dUMindU: number[][][] = [[[]]];
+    dUMaxdU: number[][][] = [[[]]];
+    dUMinU: number[][][] = [[[]]];
+    dUMaxU: number[][][] = [[[]]];
+    dUMinZ: number[][][] = [[[]]];
+    dUMaxZ: number[][][] = [[[]]];
+    optimalInputsHc: number[][][] = [[[]]];
+    optimalMovesHc: number[][][] = [[[]]];
+}

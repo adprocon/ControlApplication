@@ -1,0 +1,133 @@
+.tablelistheading {
+  cursor: pointer;
+  text-align: left;
+}
+
+.tablelistcell {
+  vertical-align: middle;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+.tablelist {
+  max-width: 45rem;
+  text-align: left;
+  margin: 0 auto;
+}
+
+.error {
+  color: red;
+  //font-family: "Courier New";
+  font-style: italic;
+}
+
+.errorBorder {
+  border: 2px solid rgba(255, 0, 0, 0.5);
+}
+
+/* Tooltip container */
+.localtooltip {
+  margin-left: 1rem;
+  position: relative;
+  display: inline-block;
+}
+
+/* Tooltip text */
+.localtooltip .tooltiptext {
+  width: max-content;
+  background-color: darkred;
+  color: white;
+  font-size: 0.75rem;
+  text-align: center;
+  padding: 0.25rem 1rem;
+  border-radius: 6px;
+
+  /* Position the tooltip text - see examples below! */
+  position: absolute;
+  z-index: 1;
+}
+
+/* Modal window */
+.modalwindow {
+  position: fixed;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1020;
+}
+
+.modalcontent {
+  max-width: 400px;
+  background-color: #fff;
+  text-align: center;
+  border: #282c34 solid 1px;
+  border-radius: 10px;
+}
+
+.modalheader {
+  padding: 10px;
+}
+
+.modaltitle {
+  padding-top: 10px;
+  margin: 0;
+}
+
+.modalbody {
+  padding: 20px;
+  //border-top: 1px solid #eee;
+  //border-bottom: 1px solid #eee;
+}
+
+.modalfooter {
+  padding: 10px;
+}
+
+.paramsTable {
+  margin-left: 10%;
+  margin-right: 10%;
+  width: 80%;
+}
+
+.tableheader {
+  font-family: Monaco, serif;
+  font-style: italic;
+  font-weight: bold;
+  height: 3rem;
+}
+
+.matrixHeader {
+  font-family: Monaco, serif;
+  font-style: italic;
+  //font-weight: lighter;
+  font-size: 0.6rem;
+  padding-right: 0.5rem;
+  color: slategray;
+}
+
+.matrix {
+  border-left: 1px solid;
+  border-right: 1px solid;
+}
+
+.matrixLeft {
+  border-left: 1px solid;
+}
+
+.matrixRight {
+  border-right: 1px solid;
+}
+
+.matrixcell {
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+.mr {
+  margin-right: 40px;
+}
