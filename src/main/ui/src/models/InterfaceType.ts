@@ -1,6 +1,6 @@
 export enum InterfaceType {
     MODBUSMASTER = "Modbus Master",
     MODBUSSLAVE = "Modbus Slave",
-    // UDP = "UDP",
+    UDPSERVER = "UDP Server",
     // OPCUA = "OPC UA",
 }

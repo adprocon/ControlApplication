@@ -13,5 +13,6 @@ abstract class GeneralInterface {
     lateinit var tagList: TagList
 
     abstract fun startInterface()
+    abstract fun stopInterface()
     abstract fun copy(): GeneralModel
 }

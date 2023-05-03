@@ -17,8 +17,8 @@ const Modbus = () => {
 
     //>>>>>>>>>>>>>>>>>>>> Local states
 
-    const [node, setNode] = useState<ModbusNode>(new ModbusNode())
-    const [updNode, setUpdNode] = useState<ModbusNode>(new ModbusNode());
+    // const [node, setNode] = useState<ModbusNode>(new ModbusNode())
+    // const [updNode, setUpdNode] = useState<ModbusNode>(new ModbusNode());
     const [intr, setIntr] = useState<ProcessInterface>(new ProcessInterface())
     const [updIntr, setUpdIntr] = useState<ProcessInterface>(new ProcessInterface());
     const [edit, setEdit] = useState(false);
@@ -67,7 +67,7 @@ const Modbus = () => {
     //>>>>>>>>>>>>>>>>>>>> Modbus interface data loaded
 
     const getModbus = () => {
-        const urlTale = 'intapi/modbus';
+        const urlTale = 'intapi/interface';
         request(url + urlTale + '/' + id)
             .then(data => {
                 setIntr(data);
@@ -82,14 +82,12 @@ const Modbus = () => {
     }
 
     const setModbus = () => {
-        const urlTale = 'intapi/modbusupdate';
-        // validateModbus(updIntr, setError, setErrorField);
+        const urlTale = 'intapi/intupdate';
         if (modbusSchema.isValidSync(updIntr)) {
             request(url + urlTale, "POST", JSON.stringify(updIntr))
                 .then(data => {
                     getModbus();
                     setEdit(false);
-                    // console.log(data);
                 })
                 .catch(() => setError('Failed to update modbus interface'))
         }
@@ -97,7 +95,7 @@ const Modbus = () => {
 
     const onCancel = () => {
         setEdit(false);
-        setUpdNode(node);
+        // setUpdNode(node);
         setError('');
         setErrorField([]);
     }
@@ -152,34 +150,6 @@ const Modbus = () => {
 
 
     //>>>>>>>>>>>>>>>>>>>> Rendering
-
-    const Row = (name: string, value: any, type: string, errorName: string,
-                 handleAction: any, selectionOptions?: Array<string>) => {
-        return (
-            <tr style={{height: "2.5rem"}}>
-                <td style={{width: "15rem", fontWeight: "bold"}}>{name}</td>
-                <td style={{width: "15rem"}} className="">
-                    <div hidden={edit}>{typeof (value) === "boolean" ? (value ? "ON" : "OFF") : value}</div>
-                    <div hidden={!edit}>
-                        {inputSelect(value, type, errorField, errorName, name, handleAction, selectionOptions)}
-                    </div>
-                </td>
-            </tr>
-        )
-    }
-
-    const TextRow = (name: string, value: string) => {
-        return (
-            <tr style={{height: "2.5rem"}}>
-                <td style={{width: "15rem", fontWeight: "bold"}}>
-                    {name}
-                </td>
-                <td>
-                    <div>{value}</div>
-                </td>
-            </tr>
-        )
-    }
 
     return (
         <div className="m-auto">

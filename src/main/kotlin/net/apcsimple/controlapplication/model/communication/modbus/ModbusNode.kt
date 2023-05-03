@@ -34,6 +34,10 @@ class ModbusNode(
         Thread(runnable).start()
     }
 
+    override fun stopInterface() {
+        TODO("Not yet implemented")
+    }
+
     override fun copy(): GeneralModel {
         TODO("Not yet implemented")
     }

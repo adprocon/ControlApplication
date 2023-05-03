@@ -15,13 +15,14 @@ export const inputRow = (name: string,
                          index?: number,
                          ref?: any,
                          isSearchable?: boolean,
-                         isClearable?: boolean
+                         isClearable?: boolean,
+                         style: object = {}
 ) => {
     return (
         <tr style={{height: "2.5rem"}} key={index}>
             <td style={{width: "", fontWeight: "bold"}}>{name}</td>
             <td style={{width: ""}} className="">
-                <div hidden={edit}>{typeof (value) === "boolean" ? (value ? "ON" : "OFF") : value}</div>
+                <div hidden={edit}  style={style}>{typeof (value) === "boolean" ? (value ? "ON" : "OFF") : value}</div>
                 <div hidden={!edit}>
                     {inputSelect(value, type, errorField, errorName, name, handleAction,
                         selectionOptions, index, false, handleKeyAction, ref, isSearchable, isClearable)}

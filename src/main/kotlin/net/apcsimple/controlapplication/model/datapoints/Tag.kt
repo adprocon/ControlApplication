@@ -49,6 +49,10 @@ class Tag(
         val UNKNOWNTYPE = "N/A"
 
         val DEFAULT_NAME = "Not used"
+
+        fun newTag(): Tag {
+            return Tag(Tag.DEFAULT_NAME, Tag.TAGDOUBLE, 0.0)
+        }
     }
 
     // Methods

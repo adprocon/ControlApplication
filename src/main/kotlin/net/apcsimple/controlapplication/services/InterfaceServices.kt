@@ -6,14 +6,15 @@ import net.apcsimple.controlapplication.converters.ObjectJsonConverter
 import net.apcsimple.controlapplication.daoservices.InterfaceDbService
 import net.apcsimple.controlapplication.model.communication.*
 import net.apcsimple.controlapplication.model.communication.modbus.*
+import net.apcsimple.controlapplication.model.communication.udp.UdpServer
+import net.apcsimple.controlapplication.model.datapoints.Tag
 import net.apcsimple.controlapplication.model.datapoints.TagList
 import org.springframework.stereotype.Service
+import java.util.*
 
 @Service
 class InterfaceServices(
     private val interfaceDbService: InterfaceDbService,
-//    private var modbusRwFactory: ObjectFactory<ModbusRW>,
-//    private var modbusRwItemFactory: ObjectFactory<ModbusRWItem>,
     private var tagList: TagList
 ) {
 
@@ -204,11 +205,18 @@ class InterfaceServices(
         }
     }
 
-    fun loadModbus(): MutableList<ProcessInterface> {
+    fun loadInterfaceList(): MutableList<ProcessInterface> {
         val interfacesList = interfaceDbService.loadInterfacesFromDB()
         interfacesList.forEach { procInt ->
             run {
                 procInt.interfaceServices = this
+            }
+        }
+        return interfacesList
+    }
+    fun loadModbus(interfacesList: MutableList<ProcessInterface>) {
+        interfacesList.forEach { procInt ->
+            run {
                 if (procInt.type == ProcessInterface.MODBUSMASTER || procInt.type == ProcessInterface.MODBUSSLAVE) {
                     procInt.structure =
                         ObjectJsonConverter.convertFromJSON(procInt.structureJSON, ModbusNode::class.java)
@@ -220,24 +228,7 @@ class InterfaceServices(
                 }
 
             }
-
-//                run {
-//                node.tagList = tagList
-//                node.dataReads.forEach { read ->
-//                    run {
-//                        read.interfaceService = this
-//                        read.modbusRWItemFactory = modbusRwItemFactory
-//                    }
-//                }
-//                node.dataWrites.forEach { write ->
-//                    run {
-//                        write.interfaceService = this
-//                        write.modbusRWItemFactory = modbusRwItemFactory
-//                    }
-//                }
-
         }
-        return interfacesList
     }
 
     fun setModbusRwParentLinks(rwList: MutableList<ModbusRW>, modbusNode: ModbusNode) {
@@ -263,6 +254,9 @@ class InterfaceServices(
             ProcessInterface.MODBUSMASTER, ProcessInterface.MODBUSSLAVE -> {
                 structure = mapper.convertValue(node.get("structure"), ModbusNode::class.java)
             }
+            ProcessInterface.UDPSERVER -> {
+                structure = mapper.convertValue(node.get("structure"), UdpServer::class.java)
+            }
             /* Add another model types conversion here, when needed. */
             else -> {}
         }
@@ -272,4 +266,101 @@ class InterfaceServices(
         return procInt
     }
 
+    fun loadUdpServer(interfacesList: MutableList<ProcessInterface>) {
+        interfacesList.forEach { procInt ->
+            run {
+                if (procInt.type == ProcessInterface.UDPSERVER) {
+                    procInt.structure =
+                        ObjectJsonConverter.convertFromJSON(procInt.structureJSON, UdpServer::class.java)
+                    val udpServer = procInt.structure as UdpServer
+                    udpServer.processInterface = procInt
+                    udpServer.tagList = tagList
+                    for (i in udpServer.read.indices) {
+                        udpServer.read[i] = udpServer.read[i].id?.let { udpServer.tagList.idList[udpServer.read[i].id] } ?:
+                        Tag("Not used", Tag.TAGDOUBLE, 0.0)
+                    }
+                    for (i in udpServer.write.indices) {
+                        udpServer.write[i] = udpServer.write[i].id?.let { udpServer.tagList.idList[udpServer.write[i].id] } ?:
+                                Tag("Not used", Tag.TAGDOUBLE, 0.0)
+                    }
+                    udpServer.tagList = tagList
+                }
+            }
+        }
+
+    }
+
+    fun udpServerRemoveTag(udpServer: UdpServer, type: String, index: Int): Boolean {
+        try {
+            if (type == "read") {
+                udpServer.read.removeAt(index)
+            } else {
+                udpServer.write.removeAt(index)
+            }
+        } catch (e: Exception) {
+            return false
+        }
+        saveInterface(udpServer.processInterface)
+        return true
+    }
+
+    fun udpServerMoveTag(udpServer: UdpServer, type: String, index: Int, dir: String): Boolean {
+        try {
+            val list: List<Tag?>?
+            list = if (type == "read") {
+                udpServer.read
+            } else {
+                udpServer.write
+            }
+            if (dir == "up") {
+                if (index > 0) {
+                    Collections.swap(list, index, index - 1)
+                }
+            }
+            if (dir == "down") {
+                if (index < udpServer.read!!.size - 1) {
+                    Collections.swap(list, index, index + 1)
+                }
+            }
+            saveInterface(udpServer.processInterface)
+        } catch (e: Exception) {
+            return false
+        }
+        return true
+    }
+
+    fun udpServerUpdate(updInt: ProcessInterface, interfaceList: InterfaceList): Boolean {
+        val existingInt = updInt.id?.let { findInterfaceById(it, interfaceList) }
+        try {
+            existingInt!!.name = updInt.name
+            val existingUdpServer = existingInt.structure as UdpServer
+            val updUdpServer = updInt.structure as UdpServer
+            existingUdpServer.port = updUdpServer.port
+            existingUdpServer.read = updUdpServer.read
+            existingUdpServer.write = updUdpServer.write
+            for (i in existingUdpServer.read.indices) {
+                existingUdpServer.read[i] = tagList.list[existingUdpServer.read[i].tagName] ?:
+                Tag("Not used", Tag.TAGDOUBLE, 0.0)
+            }
+            for (i in existingUdpServer.write.indices) {
+                existingUdpServer.write[i] = tagList.list[existingUdpServer.write[i].tagName] ?:
+                Tag("Not used", Tag.TAGDOUBLE, 0.0)
+            }
+            saveInterface(existingInt)
+        } catch (e: Exception) {
+            return false
+        }
+        return true
+    }
+
+    fun udpServerAddTag(existingInt: ProcessInterface, read: Boolean): Boolean {
+        val udpServer = existingInt.structure as UdpServer
+        if (read) {
+            udpServer.read.add(Tag.newTag())
+        } else {
+            udpServer.write.add(Tag.newTag())
+        }
+        saveInterface(existingInt)
+        return true
+    }
 }

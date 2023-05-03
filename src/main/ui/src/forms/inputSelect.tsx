@@ -53,18 +53,8 @@ const inputSelect = (fieldVariable: any,
                     isClearable={isClearable}
                     isSearchable={isSearchable}
                     placeholder={placeholder}
-                    // name="color"
-                    // defaultValue={fieldVariable}
                     value={{value: fieldVariable, label: fieldVariable}}
-                    // autoFocus={true}
                     onChange={(newValue: any) => handleAction(newValue ? newValue.value : "", index)}
-                    // onKeyDown={(e) => {
-                    //     e.preventDefault();
-                    //     console.log(e.key);
-                    //     if (handleKeyAction) {
-                    //         handleKeyAction(e.key);
-                    //     }
-                    // }}
                     options={dataOptions(optionsArray)}
                 /> : null
             }

@@ -12,6 +12,7 @@ import ControllersList from "./components/ControllersList";
 import MpcComp from "./components/MpcComp";
 import StateSpaceSimulation from "./components/StateSpaceSimulation";
 import MpcDiagComp from "./components/MpcDiagComp";
+import UdpServerComponent from "./components/UdpServerComponent";
 
 const App = () => {
 
@@ -25,6 +26,7 @@ const App = () => {
                     <Route path='/ui/taglist' element={<TagList/>}/>
                     <Route path='/ui/intlist' element={<InterfaceList/>}/>
                     <Route path='/ui/modbus/:id' element={<Modbus/>}></Route>
+                    <Route path='/ui/udpserver/:id' element={<UdpServerComponent/>}></Route>
                     <Route path='/ui/modbus/:id/:type/:rwid' element={<ModbusRwItemComponent/>}></Route>
                     <Route path='/ui/models' element={<ModelsList/>}/>
                     <Route path='/ui/models/statespace/:id' element={<StateSpaceModel/>}/>

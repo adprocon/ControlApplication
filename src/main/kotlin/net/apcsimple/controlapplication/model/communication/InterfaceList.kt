@@ -1,36 +1,47 @@
 package net.apcsimple.controlapplication.model.communication
 
 import net.apcsimple.controlapplication.model.communication.modbus.ModbusNode
+import net.apcsimple.controlapplication.model.communication.udp.UdpServer
 import net.apcsimple.controlapplication.services.InterfaceServices
-import org.springframework.beans.factory.ObjectFactory
 import org.springframework.stereotype.Component
 
 @Component("interfaceList")
 class InterfaceList(
     val interfaceServices: InterfaceServices,
-//    val modbusObjectFactory: ObjectFactory<ModbusNode>
 ) {
     val list: MutableList<ProcessInterface> = mutableListOf()
 
     fun load() {
-        list.addAll(interfaceServices.loadModbus())
+        list.addAll(interfaceServices.loadInterfaceList())
+        interfaceServices.loadModbus(list)
+        interfaceServices.loadUdpServer(list)
     }
 
     fun addNewInterface(intrfc: ProcessInterface): Boolean {
-        return if (intrfc.type == ProcessInterface.MODBUSMASTER || intrfc.type == ProcessInterface.MODBUSSLAVE) {
-            val newInt = ProcessInterface(intrfc.name, intrfc.type)
-            newInt.interfaceServices = interfaceServices
-            val newMbNode = ModbusNode()
-            newMbNode.processInterface = newInt
-            newInt.structure = newMbNode
-//            newInt.name = intrfc.name
-//            newInt.type = intrfc.type
-//            if (intrfc.type == GeneralInterface.MODBUSSLAVE) newModbusNode.master = false
-            interfaceServices.addInterface(newInt, this)
-            true
-        }
-        else {
-            false
+        return when (intrfc.type) {
+            ProcessInterface.MODBUSMASTER, ProcessInterface.MODBUSSLAVE -> {
+                val newInt = ProcessInterface(intrfc.name, intrfc.type)
+                newInt.interfaceServices = interfaceServices
+                val newMbNode = ModbusNode()
+                newMbNode.processInterface = newInt
+                newInt.structure = newMbNode
+                interfaceServices.addInterface(newInt, this)
+                true
+            }
+
+            ProcessInterface.UDPSERVER -> {
+                val newInt = ProcessInterface(intrfc.name, intrfc.type)
+                newInt.interfaceServices = interfaceServices
+                val newUdpServer = UdpServer()
+                newUdpServer.processInterface = newInt
+                newInt.structure = newUdpServer
+                interfaceServices.addInterface(newInt, this)
+                true
+            }
+
+            else -> {
+                false
+            }
         }
     }
 
@@ -41,14 +52,13 @@ class InterfaceList(
 
     fun switchInterface(id: Long): Boolean {
         val intrfc = list.find { item -> item.id == id } ?: return false
-        return if (intrfc.type == ProcessInterface.MODBUSMASTER || intrfc.type == ProcessInterface.MODBUSSLAVE) {
-            val procInt = interfaceServices.findInterfaceById(id, this) ?: return false
-            procInt.running = !(procInt.running)
-//            interfaceService.saveInterface(modbusNode)
-            true
-        } else {
-            false
-        }
+//        return if (intrfc.type == ProcessInterface.MODBUSMASTER || intrfc.type == ProcessInterface.MODBUSSLAVE) {
+        val procInt = interfaceServices.findInterfaceById(id, this) ?: return false
+        procInt.running = !(procInt.running)
+        return true
+//        } else {
+//            false
+//        }
     }
 
 

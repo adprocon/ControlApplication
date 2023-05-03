@@ -129,8 +129,9 @@ const Interfaces = () => {
         const urlTale = 'intapi/interfaces';
         request(url + urlTale)
             .then(data => {
-                setInterfaceList(data)
-                setRowError('')
+                setInterfaceList(data);
+                setRowError('');
+                // console.log(data);
             })
             .catch(() => setRowError('Failed to load interfaces'))
     }
@@ -174,8 +175,25 @@ const Interfaces = () => {
     }
 
     const onEdit = (id: number, type: InterfaceType) => {
-        if (type === InterfaceType.MODBUSMASTER || type === InterfaceType.MODBUSSLAVE) {
-            navigate(`/ui/modbus/${id}`);
+        console.log(type === InterfaceType.MODBUSSLAVE);
+        switch (type) {
+            case InterfaceType.MODBUSMASTER:
+            case InterfaceType.MODBUSSLAVE:
+            {
+                console.log("test");
+                navigate(`/ui/modbus/${id}`);
+                break;
+            }
+            case InterfaceType.UDPSERVER:
+            {
+                navigate(`/ui/udpserver/${id}`);
+                break;
+            }
+            default:
+            {
+                console.log("default");
+                break;
+            }
         }
     }
 

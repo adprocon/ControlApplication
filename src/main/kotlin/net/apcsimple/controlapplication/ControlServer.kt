@@ -6,6 +6,7 @@ import net.apcsimple.controlapplication.model.processcontrollers.ControllersList
 import net.apcsimple.controlapplication.model.processmodels.ModelsList
 import org.springframework.boot.CommandLineRunner
 import org.springframework.boot.autoconfigure.SpringBootApplication
+import org.springframework.boot.runApplication
 import sklog.KotlinLogging
 import java.util.Timer
 import kotlin.concurrent.timerTask

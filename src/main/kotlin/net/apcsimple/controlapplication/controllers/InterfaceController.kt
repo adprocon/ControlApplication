@@ -47,14 +47,14 @@ class InterfaceController(
         }
     }
 
-    @GetMapping("/modbus/{id}")
+    @GetMapping("/interface/{id}")
     fun getModbusNode(@PathVariable id: Long): ProcessInterface? {
         return interfaceServices.findInterfaceById(id, interfaceList)
     }
 
-    @PostMapping("/modbusupdate")
-    fun updateModbusNode(@RequestBody json: String) {
-        logger.warning(json)
+    @PostMapping("/intupdate")
+    fun updateInterface(@RequestBody json: String) {
+//        logger.warning(json)
         if (!interfaceServices.editInterface(interfaceServices.getInterfaceFromJson(json), interfaceList)) {
             throw ResponseStatusException(HttpStatus.CONFLICT, "Failed to delete interface.")
         }
@@ -94,26 +94,37 @@ class InterfaceController(
     ): MutableList<ModbusRWItem> {
         val procInt: ProcessInterface = interfaceServices.findInterfaceById(id, interfaceList)
             ?: throw ResponseStatusException(HttpStatus.CONFLICT, "Wrong Modbus node ID.")
-        val modbusRw: ModbusRW = interfaceServices.findModbusRWById(rwid, type == "read", procInt.structure as ModbusNode)
-            ?: throw ResponseStatusException(HttpStatus.CONFLICT, "Wrong Modbus RW node ID.")
+        val modbusRw: ModbusRW =
+            interfaceServices.findModbusRWById(rwid, type == "read", procInt.structure as ModbusNode)
+                ?: throw ResponseStatusException(HttpStatus.CONFLICT, "Wrong Modbus RW node ID.")
         return modbusRw.mbRwTagList
     }
 
     @PostMapping("/modbusrwupdate/{id}/{type}/{rwid}")
-    fun updateModbusRwItems(@PathVariable id: Long,
-                            @PathVariable rwid: Int,
-                            @PathVariable type: String,
-                            @RequestBody mbRwList: MutableList<ModbusRWItemJSON>): Boolean {
+    fun updateModbusRwItems(
+        @PathVariable id: Long,
+        @PathVariable rwid: Int,
+        @PathVariable type: String,
+        @RequestBody mbRwList: MutableList<ModbusRWItemJSON>
+    ): Boolean {
         val procInt: ProcessInterface = interfaceServices.findInterfaceById(id, interfaceList)
             ?: throw ResponseStatusException(HttpStatus.CONFLICT, "Wrong Modbus node ID.")
-        val modbusRw: ModbusRW = interfaceServices.findModbusRWById(rwid, type == "read", procInt.structure as ModbusNode)
-            ?: throw ResponseStatusException(HttpStatus.CONFLICT, "Wrong Modbus RW node ID.")
+        val modbusRw: ModbusRW =
+            interfaceServices.findModbusRWById(rwid, type == "read", procInt.structure as ModbusNode)
+                ?: throw ResponseStatusException(HttpStatus.CONFLICT, "Wrong Modbus RW node ID.")
         if (modbusRw.mbRwTagList.size != mbRwList.size) {
             throw ResponseStatusException(HttpStatus.CONFLICT, "Array has wrong size")
         }
         return interfaceServices.editModbusRwItemsList(mbRwList, modbusRw)
     }
 
+    @PostMapping("/udpaddtag/{id}/{type}")
+    fun addUdpTag(@PathVariable id: Long, @PathVariable type: String) {
+        val udpServer = interfaceServices.findInterfaceById(id, interfaceList)
+        if ((udpServer == null) || !interfaceServices.udpServerAddTag(udpServer, type == "read")) {
+            throw ResponseStatusException(HttpStatus.CONFLICT, "Failed to delete interface.")
+        }
+    }
 
 
 }

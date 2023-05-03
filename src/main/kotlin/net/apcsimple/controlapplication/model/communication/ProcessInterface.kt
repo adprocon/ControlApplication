@@ -51,6 +51,8 @@ class ProcessInterface (
             field = value
             if (value) {
                 structure?.startInterface()
+            } else {
+                structure?.stopInterface()
             }
         }
 
@@ -61,7 +63,7 @@ class ProcessInterface (
     companion object {
         val MODBUSMASTER ="Modbus Master"
         val MODBUSSLAVE ="Modbus Slave"
-        val UDP = "UDP"
+        val UDPSERVER = "UDP Server"
         val OPCUAclient = "OPC UA Client"
 
         const val DISCONNECTED = "Disconnected"

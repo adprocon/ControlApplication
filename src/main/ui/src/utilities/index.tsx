@@ -131,3 +131,17 @@ export const transposeArray = (ar: number[][]) => {
     // }
     return ar[0].map((_, colIndex) => ar.map(row => row[colIndex]));
 }
+
+export const deepCopy = (data: any) => {
+    return JSON.parse(JSON.stringify(data));
+}
+
+// export const deepCopy = (data: any) => {
+//     let newObj = Object.assign({}, data);
+//     for (let key in newObj) {
+//         if (typeof newObj[key] === "object" && newObj[key] !== null) {
+//             newObj[key] = deepCopy(newObj[key]);
+//         }
+//     }
+//     return newObj;
+// }
